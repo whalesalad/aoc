@@ -42,7 +42,15 @@ treb7uchet")
 
 (deftest test-replace-spelled-numbers
   (is (= "219" (replace-spelled-integers-in-line "two1nine")))
-  (is (= "823" (replace-spelled-integers-in-line "eightwothree"))))
+  ;; I had thought I had a solid plan here to just brute force
+  ;; reduce the line by iteratively replacing one with 1, two with 2, etc
+  ;; but this test case throws a wrench in that as we need to still abide
+  ;; by the first/last system.
+  ;;
+  ;; So we cannot go a big fat replace on the string. Need to do it iteratively.
+  ;; backwards will be even harder because
+  ;;
+  (is (= "8wo3" (replace-spelled-integers-in-line "eightwothree"))))
 
 
 (deftest part1
