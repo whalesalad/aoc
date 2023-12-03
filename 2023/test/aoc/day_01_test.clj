@@ -4,9 +4,7 @@
                                 part-2
                                 first-digit
                                 last-digit
-                                integer-from-digits
-                                replace-spelled-integers-in-line
-                                replace-spelled-integer]]))
+                                integer-from-digits]]))
 
 (def test-data
   "1abc2
@@ -14,10 +12,20 @@ pqr3stu8vwx
 a1b2c3d4e5f
 treb7uchet")
 
+(def test-data-part-2
+  [["two1nine" "29"]
+   ["eightwothree" "83"]
+   ["abcone2threexyz" "13"]
+   ["xtwone3four" "24"]
+   ["4nineeightseven2" "42"]
+   ["zoneight234" "14"]
+   ["7pqrstsixteen" "76"]])
+
 (deftest test-first-digit
   (is (= "1" (first-digit "1abc2")))
   (is (= "3" (first-digit "pqr3stu8vwx")))
-  (is (= "7" (first-digit "treb7uchet"))))
+  (is (= "7" (first-digit "treb7uchet")))
+  (is (= "2" (first-digit "two1nine"))))
 
 
 (deftest test-last-digit
@@ -33,25 +41,6 @@ treb7uchet")
     (doseq [[first second expected] cases]
       (is (= expected
              (integer-from-digits first second))))))
-
-
-(deftest test-replace-spelled-integer
-  (is (= "11" (replace-spelled-integer "one1" "one")))
-  (is (= "2222three" (replace-spelled-integer "two2two2three" "two"))))
-
-
-(deftest test-replace-spelled-numbers
-  (is (= "219" (replace-spelled-integers-in-line "two1nine")))
-  ;; I had thought I had a solid plan here to just brute force
-  ;; reduce the line by iteratively replacing one with 1, two with 2, etc
-  ;; but this test case throws a wrench in that as we need to still abide
-  ;; by the first/last system.
-  ;;
-  ;; So we cannot go a big fat replace on the string. Need to do it iteratively.
-  ;; backwards will be even harder because
-  ;;
-  (is (= "8wo3" (replace-spelled-integers-in-line "eightwothree"))))
-
 
 (deftest part1
   (let [expected 142

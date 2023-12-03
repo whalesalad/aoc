@@ -13,25 +13,21 @@
    "eight" "8"
    "nine" "9"})
 
-(defn replace-spelled-integer
-  [line spelled]
-  (let [replacement (get replacements spelled)]
-    (string/replace line spelled replacement)))
-
-(defn replace-spelled-integers-in-line
-  [line]
-  ;; for each key/val in replacements, we'll want to replace
-  (reduce replace-spelled-integer line (keys replacements)))
+(def part-1-re #"\d")
+(def part-2-re #"\d|one|two|three|four|five|six|seven|eight|nine|ten")
 
 (defn first-digit
   "Find the first digit in a string of text"
   [text]
-  (first (re-seq #"\d" text)))
+  (let [digit (first (re-seq part-2-re text))]
+    (if-let [replacement (get replacements digit)]
+      replacement
+      digit)))
 
 (defn last-digit
   "Find the last digit in a string of text"
   [text]
-  (first (reverse (re-seq #"\d" text))))
+  (first (reverse (re-seq part-2-re text))))
 
 (defn integer-from-digits
   [first last]
