@@ -66,6 +66,10 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green")
     (println)
     result))
 
+(defn powers-for-game
+  [{turns :turns}]
+    (reduce * (vals (turns-to-maximums turns))))
+
 (defn games-possible-for
   [games bag-limits]
   (let [pred (fn [g] (check-game g bag-limits))]
@@ -95,4 +99,6 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green")
 (defn part-2
   "Day 01 Part 2"
   [input]
-  nil)
+  (let [games (map parse-game-line (str/split-lines input))
+        powers (map powers-for-game games)]
+    (reduce + powers)))
