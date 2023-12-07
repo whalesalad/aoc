@@ -7,6 +7,8 @@
 (defn read-input
   [day part]
   (let [day-idx (day-to-idx day)
+        ;; todo if no input is found for part 2, fall-back to part 1
+        ;; so far all of the part 2's rely on the same input.
         filename (str "resources/day" day-idx "-part" part ".txt")
         data (slurp filename)]
     (println "read input from" filename)
