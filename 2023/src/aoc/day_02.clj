@@ -38,18 +38,59 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green")
     {:game (parse-game game)
      :turns (map parse-turn turns)}))
 
+(def games
+  (map parse-game-line prompt-games))
+
+(defn turns-to-maximums
+  [turns]
+  "given a collection of turns, identify the max per-color"
+  (reduce
+   (fn [result color-map]
+     (merge-with max result color-map))
+   {}
+   turns))
+
+(defn check-game
+  "figure out the maximums for the game. then use the test map to compare each key (red, green, blue)
+   to determine if the game was possible. if yes, return the game idx, if no, return nil"
+  [{game :game turns :turns} test]
+  (let [{max-red :red max-blue :blue max-green :green} (turns-to-maximums turns)
+        result (if (every? true? [(<= max-red (:red test))
+                                  (<= max-blue (:blue test))
+                                  (<= max-green (:green test))])
+                 game
+                 nil)]
+    (println "game:" game (if result "PASS" "FAIL"))
+    (pp/pprint turns)
+    (println "\t" "red:" max-red "blue:" max-blue "green:" max-green)
+    (println)
+    result))
+
+(defn games-possible-for
+  [games bag-limits]
+  (let [pred (fn [g] (check-game g bag-limits))]
+    (filter pred games)))
 
 ;; Determine which games would have been possible if the bag had been loaded with only
-;; 12 red cubes,
-;; 13 green cubes, and
-;; 14 blue cubes.
-;; What is the sum of the IDs of those games?
+;;   12 red cubes,
+;;   13 green cubes, and
+;;   14 blue cubes.
+;;   What is the sum of the IDs of those games?
+
+(defn test-game
+  [game]
+  (println "testing game:" game)
+  (check-game game {:red 12, :green 13, :blue 14}))
+
+(comment (games-possible-for games {:red 12 :green 13 :blue 14}))
 
 (defn part-1
-  "Day 02 Part 1
-   "
+  "Day 02 Part 1"
   [input]
-  nil)
+  (let [bag-limits {:red 12, :green 13, :blue 14}
+        games (map parse-game-line (str/split-lines input))
+        possible-games (games-possible-for games bag-limits)]
+  (reduce + (map :game possible-games))))
 
 (defn part-2
   "Day 01 Part 2"
