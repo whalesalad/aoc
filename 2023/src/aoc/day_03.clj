@@ -114,10 +114,6 @@
     (filter (fn [number] (test-symbol-number symbol number))
             (distinct numbers-in-range))))
 
-;; loop every symbol
-;; for each symbol, find adjacent numbers
-;; look one line above, one line below
-;; for a given symbol index, find
 (defn find-numbers-with-adjacent-symbols
   [schematic]
   (let [symbols (:symbols schematic)
@@ -125,6 +121,23 @@
     (distinct (flatten (map (fn [s]
                               (numbers-adjacent-to-symbol-line s numbers))
                             symbols)))))
+
+(defn find-gears-for-symbol
+  [symbol numbers]
+  (let [numbers-for-symbol (numbers-adjacent-to-symbol-line symbol numbers)
+        just-numbers (map :number numbers-for-symbol)]
+    (if (= 2 (count just-numbers))
+      (reduce * just-numbers)
+      nil)))
+
+(defn find-gears
+  [schematic]
+  (let [symbols (:symbols schematic)
+        numbers (:numbers schematic)
+        gears (map (fn [s]
+                     (find-gears-for-symbol s numbers))
+                   symbols)]
+    (distinct (flatten (remove nil? gears)))))
 
 (defn part-1
   "Day 03 Part 1"
@@ -138,4 +151,6 @@
 (defn part-2
   "Day 03 Part 2"
   [input]
-  nil)
+  (let [schematic (parse-schematic input)
+        gears (find-gears schematic)]
+    (reduce + gears)))
