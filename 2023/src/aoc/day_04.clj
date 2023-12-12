@@ -28,33 +28,32 @@
 (defn parse-line
   [line]
   (let [parts (map str/trim (str/split line #"[:\|]"))
+        card (second (re-find #"Card (\d+)" (first parts)))
         winning-numbers (extract-numbers (nth parts 1))
         our-numbers (extract-numbers (nth parts 2))
         matching-numbers (clojure.set/intersection winning-numbers our-numbers)
         num-matching (count matching-numbers)]
-    (pp/pprint {:parts parts
-                :winning winning-numbers
-                :ours our-numbers
-                :matching matching-numbers
-                :num-matching num-matching})
-    (if (> num-matching 0)
-      (score-matching-numbers num-matching)
-      0)))
+    {:card card
+     :winning winning-numbers
+     :ours our-numbers
+     :matching matching-numbers
+     :num-matching num-matching
+     :score (if (> num-matching 0)
+              (score-matching-numbers num-matching)
+              0)}))
 
 (defn part-1
   "Day 04 Part 1"
   [input]
   (let [raw-lines (map str/trim (str/split-lines input))
-        scores (map parse-line raw-lines)]
-    (println scores)
+        lines (map parse-line raw-lines)
+        scores (map :score lines)]
     (reduce + scores)))
 
-;; (defn part-2
-;;   "Day 01 Part 2"
-;;   [input]
-;;   (println "input:" input)
-;;   (let [lines (string/split-lines input)
-;;         to-int (fn [line] (line-to-int line true))
-;;         integers (map to-int lines)]
-;;     (pp/pprint (zipmap lines integers))
-;;     (reduce + integers)))
+(defn part-2
+  "Day 04 Part 2"
+  [input]
+  (let [raw-lines (map str/trim (str/split-lines input))
+        lines (map parse-line raw-lines)
+        by-card (into {} (map (fn [line] [(:card line) line]) lines))]
+    (pp/pprint by-card)))
