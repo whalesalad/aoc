@@ -1,18 +1,21 @@
 (ns aoc.day-03
   (:require [clojure.string :as str]
-            [clojure.pprint :as pp]))
+            [clojure.pprint :as pp]
+            [clojure.spec.alpha :as spec]
+            [clojure.set]))
 
+;; {:symbol "*", :start 3, :end 4, :line 1}
 (def test-schematic
   "467..114..
-...*......
-..35..633.
-......#...
-617*......
-.....+.58.
-..592.....
-......755.
-...$.*....
-.664.598..")
+   ...*......
+   ..35..633.
+   ......#...
+   617*......
+   .....+.58.
+   ..592.....
+   ......755.
+   ...$.*....
+   .664.598..")
 
 (defn re-seq-pos [pattern string]
   (let [m (re-matcher pattern string)]
@@ -64,7 +67,7 @@
 
 (defn parse-schematic
   [schematic]
-  (let [lines (str/split-lines schematic)
+  (let [lines (map str/trim (str/split-lines schematic))
         height (count lines)
         width (count (first lines))
         numbers (concat (map-indexed (fn [idx line]
@@ -76,10 +79,60 @@
      :numbers (flatten numbers)
      :symbols (flatten symbols)}))
 
+
+;; {:number 467, :start 0, :end 3, :line 0}
+;; {:symbol "*", :start 3, :end 4, :line 1}
+(def n {:number 467, :start 0, :end 3, :line 0})
+(def s {:symbol "*", :start 3, :end 4, :line 1})
+
+;; (defn test-symbol-number
+;;   [symbol number]
+;;   (let [start-idx (+ -1 (:start symbol))
+;;         end-idx (+ 2 (:end symbol))]
+;;     (some? [(spec/int-in-range? start-idx end-idx (:start number))
+;;             (spec/int-in-range? start-idx end-idx (:end number))])))
+
+(defn test-symbol-number
+  [symbol number]
+  (let [symbol-range (set (range (+ -1 (:start symbol))
+                                 (+ 1 (:end symbol))))
+        number-range (set (range (+ -1 (:start number))
+                                 (+ 1 (:end number))))
+        intersection (clojure.set/intersection symbol-range number-range)]
+    (println {:symbol-range symbol-range :number-range number-range :intersection intersection})
+    (not-empty intersection)))
+
+(defn numbers-adjacent-to-symbol-line
+  [symbol numbers]
+  (let [line (:line symbol)
+        start-line (+ -1 line)
+        end-line (+ 2 line)
+        numbers-in-range (filter (fn [{line :line}]
+                                   (spec/int-in-range? start-line end-line line))
+                                 numbers)]
+    (pp/pprint {:symbol symbol :line line :start-line start-line :end-line end-line})
+    (filter (fn [number] (test-symbol-number symbol number))
+            (distinct numbers-in-range))))
+
+;; loop every symbol
+;; for each symbol, find adjacent numbers
+;; look one line above, one line below
+;; for a given symbol index, find
+(defn find-numbers-with-adjacent-symbols
+  [schematic]
+  (let [symbols (:symbols schematic)
+        numbers (:numbers schematic)]
+    (distinct (flatten (map (fn [s]
+                              (numbers-adjacent-to-symbol-line s numbers))
+                            symbols)))))
+
 (defn part-1
   "Day 03 Part 1"
   [input]
-  nil)
+  (let [schematic (parse-schematic input)
+        good-numbers (find-numbers-with-adjacent-symbols schematic)
+        just-numbers (map :number good-numbers)]
+    just-numbers))
 
 (defn part-2
   "Day 03 Part 2"
