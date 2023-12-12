@@ -28,12 +28,12 @@
 (defn parse-line
   [line]
   (let [parts (map str/trim (str/split line #"[:\|]"))
-        card (second (re-find #"Card (\d+)" (first parts)))
+        card (second (re-find #"Card\s+(\d+)" (first parts)))
         winning-numbers (extract-numbers (nth parts 1))
         our-numbers (extract-numbers (nth parts 2))
         matching-numbers (clojure.set/intersection winning-numbers our-numbers)
         num-matching (count matching-numbers)]
-    {:card card
+    {:card (Integer/parseInt card)
      :winning winning-numbers
      :ours our-numbers
      :matching matching-numbers
@@ -41,6 +41,10 @@
      :score (if (> num-matching 0)
               (score-matching-numbers num-matching)
               0)}))
+
+(defn sum
+  [coll]
+  (reduce + coll))
 
 (defn part-1
   "Day 04 Part 1"
@@ -55,5 +59,9 @@
   [input]
   (let [raw-lines (map str/trim (str/split-lines input))
         lines (map parse-line raw-lines)
-        by-card (into {} (map (fn [line] [(:card line) line]) lines))]
-    (pp/pprint by-card)))
+        take-additional-cards (fn [card n]
+                                (take n (drop (:card card) lines)))
+        get-additional-scores (fn [line]
+                                 (cons (:score line) (map :score (take-additional-cards line (:score line)))))
+        with-additional-scores (map get-additional-scores lines)]
+    (sum (map count with-additional-scores))))
