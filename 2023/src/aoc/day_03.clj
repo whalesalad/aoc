@@ -51,17 +51,17 @@
         transform (fn [{start :start end :end number :group}]
                     {:number (Integer/parseInt number)
                      :start start
-                     :end end
+                     :end (+ -1 end)
                      :line idx})]
     (map transform matches)))
 
 (defn parse-line-for-symbols
   [line idx]
-  (let [matches (re-seq-pos #"([*#+$])" line)
+  (let [matches (re-seq-pos #"([^\.^\d])" line)
         transform (fn [{start :start end :end symbol :group}]
                     {:symbol symbol
                      :start start
-                     :end end
+                     :end (+ -1 end)
                      :line idx})]
     (map transform matches)))
 
@@ -131,8 +131,9 @@
   [input]
   (let [schematic (parse-schematic input)
         good-numbers (find-numbers-with-adjacent-symbols schematic)
-        just-numbers (map :number good-numbers)]
-    just-numbers))
+        just-numbers (map :number good-numbers)
+        sum (reduce + just-numbers)]
+    sum))
 
 (defn part-2
   "Day 03 Part 2"
