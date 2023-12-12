@@ -80,8 +80,6 @@
      :symbols (flatten symbols)}))
 
 
-;; {:number 467, :start 0, :end 3, :line 0}
-;; {:symbol "*", :start 3, :end 4, :line 1}
 (def n {:number 467, :start 0, :end 3, :line 0})
 (def s {:symbol "*", :start 3, :end 4, :line 1})
 
