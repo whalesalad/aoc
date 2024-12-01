@@ -36,16 +36,12 @@ fn calculate_distances(left: Vec<i32>, right: Vec<i32>) -> Vec<i32> {
 }
 
 fn similarity_scores(left: Vec<i32>, right: Vec<i32>) -> Vec<i32> {
-    let left_iter = left.into_iter();
-    let mut scores: Vec<i32> = Vec::new();
-
-    for val in left_iter {
-        // find # of occurrences in the right vec
-        let occurrences = right.iter().filter(|r| **r == val).count();
-        let score = val as usize * occurrences;
-        scores.push(score.try_into().unwrap());
-    }
-    scores
+    left.into_iter()
+        .map(|val| {
+            let occurrences = right.iter().filter(|&&r| r == val).count() as i32;
+            val * occurrences
+        })
+        .collect()
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
