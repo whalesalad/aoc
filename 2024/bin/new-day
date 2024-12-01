@@ -1,0 +1,48 @@
+#!/bin/bash
+DAY=$(printf "day%02d" $1)
+DATA_DIR="data"
+SRC_DIR="src/days"
+TESTS_DIR="tests"
+
+mkdir -p "$DATA_DIR" "$SRC_DIR" "$TESTS_DIR"
+
+# Create input files
+touch "$DATA_DIR/$DAY-part1.txt"
+touch "$DATA_DIR/$DAY-part2.txt"
+
+# Create Rust source file
+cat <<EOL > "$SRC_DIR/$DAY.rs"
+pub fn part1(input: &str) -> String {
+    // TODO: Implement part 1
+    "Not implemented".to_string()
+}
+
+pub fn part2(input: &str) -> String {
+    // TODO: Implement part 2
+    "Not implemented".to_string()
+}
+EOL
+
+# Create Rust test file
+cat <<EOL > "$TESTS_DIR/${DAY}_test.rs"
+use aoc2024::days::$DAY;
+
+#[test]
+fn test_part1() {
+    let input = include_str!("../data/${DAY}-part1.txt");
+    assert_eq!(part1(input), "Expected Result");
+}
+
+#[test]
+fn test_part2() {
+    let input = include_str!("../data/${DAY}-part2.txt");
+    assert_eq!(part2(input), "Expected Result");
+}
+EOL
+
+# Update mod.rs
+if ! grep -q "pub mod $DAY;" "$SRC_DIR/mod.rs"; then
+    echo "pub mod $DAY;" >> "$SRC_DIR/mod.rs"
+fi
+
+echo "Scaffolded $DAY."
