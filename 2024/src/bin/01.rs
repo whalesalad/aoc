@@ -19,14 +19,50 @@ fn parse_input(input: &str) -> (Vec<i32>, Vec<i32>) {
     (left, right)
 }
 
+fn calculate_distances(left: Vec<i32>, right: Vec<i32>) -> Vec<i32> {
+    // Sort the input vectors and create iterators
+    let mut left_sorted = left.into_iter().collect::<Vec<_>>();
+    let mut right_sorted = right.into_iter().collect::<Vec<_>>();
+
+    left_sorted.sort_unstable();
+    right_sorted.sort_unstable();
+
+    // Use an iterator to zip the two sorted vectors and calculate distances
+    left_sorted
+        .into_iter()
+        .zip(right_sorted.into_iter())
+        .map(|(l, r)| (l - r).abs())
+        .collect()
+}
+
+fn similarity_scores(left: Vec<i32>, right: Vec<i32>) -> Vec<i32> {
+    let left_iter = left.into_iter();
+    let mut scores: Vec<i32> = Vec::new();
+
+    for val in left_iter {
+        // find # of occurrences in the right vec
+        let occurrences = right.iter().filter(|r| **r == val).count();
+        let score = val as usize * occurrences;
+        scores.push(score.try_into().unwrap());
+    }
+    scores
+}
+
 pub fn part_one(input: &str) -> Option<u32> {
     let (left, right) = parse_input(input);
+    let distances: Vec<i32> = calculate_distances(left, right);
+    let sum: i32 = distances.iter().sum();
 
-    None
+    Some(sum.try_into().unwrap())
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let (left, right) = parse_input(input);
+    let scores: Vec<i32> = similarity_scores(left, right);
+    // println!("scores: {:#?}", scores);
+    let sum: i32 = scores.iter().sum();
+
+    Some(sum.try_into().unwrap())
 }
 
 #[cfg(test)]
@@ -36,12 +72,12 @@ mod tests {
     #[test]
     fn test_part_one() {
         let result = part_one(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        assert_eq!(result, Some(11));
     }
 
     #[test]
     fn test_part_two() {
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        assert_eq!(result, Some(31));
     }
 }
