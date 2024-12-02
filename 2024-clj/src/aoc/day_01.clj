@@ -35,17 +35,17 @@
 (defn part-1
   "Day 01 Part 1"
   [input]
-  (println "input:" input)
+  ;; (println "input:" input)
   (let [parsed-input (parse-input input)
         output (apply calculate-distances parsed-input)]
-    (println "output:" output)
+    ;; (println "output:" output)
     output))
 
 (defn part-2
   "Day 01 Part 2"
   [input]
-  (println "input:" input)
+  ;; (println "input:" input)
   (let [parsed-input (parse-input input)
         output (apply similarity-scores parsed-input)]
-    (println "output:" output)
+    ;; (println "output:" output)
     output))
