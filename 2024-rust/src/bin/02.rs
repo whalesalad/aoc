@@ -39,6 +39,28 @@ fn safe_levels(levels: &Vec<u8>) -> bool {
     increasing_or_decreasing(levels) && adjacent_level_check(levels)
 }
 
+fn safe_levels_allow_one_bad_level(levels: &Vec<u8>) -> bool {
+    let original = safe_levels(levels);
+
+    if original {
+        return true;
+    }
+
+    // else... loop through permutations of the levels where we exclude one level
+    // ie, if original is [1, 2, 3, 4, 5]
+    // we'll test [1, 2, 3, 4], [1, 2, 3, 5], [1, 2, 4, 5], [1, 3, 4, 5], [2, 3, 4, 5]
+    // and if any of those are safe_levels, return true.
+    for i in 0..levels.len() {
+        let mut clone = levels.clone();
+        clone.remove(i);
+        if safe_levels(&clone) {
+            return true;
+        }
+    }
+
+    false
+}
+
 pub fn part_one(input: &str) -> Option<usize> {
     /*
     7 6 4 2 1
@@ -63,8 +85,15 @@ pub fn part_one(input: &str) -> Option<usize> {
     Some(out)
 }
 
-pub fn part_two(input: &str) -> Option<u32> {
-    None
+pub fn part_two(input: &str) -> Option<usize> {
+    let parsed = parse_input(input);
+
+    let out = parsed
+        .into_iter()
+        .filter(|levels| safe_levels_allow_one_bad_level(levels))
+        .count();
+
+    Some(out)
 }
 
 #[cfg(test)]
@@ -89,6 +118,11 @@ mod tests {
     fn test_part_one() {
         let result = part_one(&advent_of_code::template::read_file("examples", DAY));
         assert_eq!(result, Some(2));
+    }
+
+    #[test]
+    fn test_safe_levels_allow_one_bad_level() {
+        assert_eq!(safe_levels_allow_one_bad_level(&vec![1, 3, 2, 4, 5]), true);
     }
 
     #[test]
