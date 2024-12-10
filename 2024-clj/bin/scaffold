@@ -1,0 +1,73 @@
+#!/bin/bash
+
+# Exit on errors or unset variables
+set -euo pipefail
+
+# Check if a day number is provided
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 <day_number>"
+  exit 1
+fi
+
+# Ensure day number is zero-padded to 2 digits
+DAY_NUM=$(printf "%02d" "$1")
+
+# Define paths
+SRC_FILE="src/aoc/day_${DAY_NUM}.clj"
+TEST_FILE="test/aoc/day_${DAY_NUM}_test.clj"
+RESOURCE_FILE="resources/day${DAY_NUM}.txt"
+
+# Create src file
+if [ ! -f "$SRC_FILE" ]; then
+  mkdir -p "$(dirname "$SRC_FILE")"
+  cat <<EOF > "$SRC_FILE"
+(ns aoc.day-${DAY_NUM})
+
+(defn part-1
+  "Day ${DAY_NUM} Part 1"
+  [input]
+  (println "input:" input)
+  ;; Implement part 1 logic here
+  )
+
+(defn part-2
+  "Day ${DAY_NUM} Part 2"
+  [input]
+  (println "input:" input)
+  ;; Implement part 2 logic here
+  )
+EOF
+  echo "Created source file: $SRC_FILE"
+else
+  echo "Source file already exists: $SRC_FILE"
+fi
+
+# Create test file
+if [ ! -f "$TEST_FILE" ]; then
+  mkdir -p "$(dirname "$TEST_FILE")"
+  cat <<EOF > "$TEST_FILE"
+(ns aoc.day-${DAY_NUM}-test
+  (:require [clojure.test :refer [deftest is]]
+            [aoc.day-${DAY_NUM} :refer [part-1 part-2]]))
+
+(deftest test-part-1
+  (is (= nil (part-1 nil)))) ; Replace with actual test
+
+(deftest test-part-2
+  (is (= nil (part-2 nil)))) ; Replace with actual test
+EOF
+  echo "Created test file: $TEST_FILE"
+else
+  echo "Test file already exists: $TEST_FILE"
+fi
+
+# Create resource file
+if [ ! -f "$RESOURCE_FILE" ]; then
+  mkdir -p "$(dirname "$RESOURCE_FILE")"
+  echo "Placeholder input for day ${DAY_NUM}" > "$RESOURCE_FILE"
+  echo "Created resource file: $RESOURCE_FILE"
+else
+  echo "Resource file already exists: $RESOURCE_FILE"
+fi
+
+echo "Scaffolding complete for Day ${DAY_NUM}!"
