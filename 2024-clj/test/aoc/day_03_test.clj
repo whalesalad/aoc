@@ -2,15 +2,24 @@
   (:require [clojure.test :refer [deftest testing is]]
             [clojure.string :as string]
             [aoc.day-03 :refer [sample-data
-                                parse-input
-                                calculate-pairs]]))
+                                sample-data-part-2
+                                parse-input-day-1
+                                calculate-pairs
+                                parse-input-day-2
+                                process-part-2]]))
 
 
-(def test-data (parse-input sample-data))
+(def test-data (parse-input-day-1 sample-data))
 
 
 (deftest test-calculate-pairs
   (is (= 161 (calculate-pairs test-data))))
+
+
+(deftest test-process-part-2
+  (let [data (parse-input-day-2 sample-data-part-2)
+        processed (process-part-2 data)]
+    (is (= 48 processed))))
 
 ;; (deftest test-first-digit-replace
 ;;   (is (= "2" (first-digit "two1nine" true)))
